@@ -11,6 +11,7 @@ COPY . .
 
 # 3. Now that all files are copied, run prisma generate
 RUN npx prisma generate
+RUN npx prisma db seed
 
 # 4. Build the Next.js application
 RUN npm run build
