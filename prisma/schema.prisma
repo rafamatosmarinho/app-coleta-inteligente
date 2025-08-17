@@ -1,0 +1,133 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String?
+  password      String?
+  role          UserRole @default(STAFF)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Relacionamentos
+  collectionRoutes CollectionRoute[]
+  collections     Collection[]
+  
+  @@map("users")
+}
+
+model TrashBin {
+  id              String      @id @default(cuid())
+  code            String      @unique
+  name            String
+  location        String
+  latitude        Float
+  longitude       Float
+  capacity        Int         @default(100)
+  currentLevel    Int         @default(0)
+  status          BinStatus   @default(ACTIVE)
+  lastEmptiedAt   DateTime?
+  nextCollection  DateTime?
+  batteryLevel    Int         @default(100)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  // Relacionamentos
+  collections Collection[]
+  routeBins   RouteBin[]
+  
+  @@map("trash_bins")
+}
+
+model CollectionRoute {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  status      RouteStatus @default(PLANNED)
+  assignedTo  String?
+  scheduledAt DateTime?
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relacionamentos
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  bins      RouteBin[]
+  collections Collection[]
+  
+  @@map("collection_routes")
+}
+
+model RouteBin {
+  id        String @id @default(cuid())
+  routeId   String
+  binId     String
+  order     Int
+  status    BinRouteStatus @default(PENDING)
+  createdAt DateTime @default(now())
+  
+  // Relacionamentos
+  route CollectionRoute @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  bin   TrashBin        @relation(fields: [binId], references: [id], onDelete: Cascade)
+  
+  @@unique([routeId, binId])
+  @@map("route_bins")
+}
+
+model Collection {
+  id          String   @id @default(cuid())
+  routeId     String
+  binId       String
+  collectedBy String
+  collectedAt DateTime @default(now())
+  amount      Int
+  notes       String?
+  
+  // Relacionamentos
+  route CollectionRoute @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  bin   TrashBin        @relation(fields: [binId], references: [id], onDelete: Cascade)
+  user  User            @relation(fields: [collectedBy], references: [id])
+  
+  @@map("collections")
+}
+
+enum UserRole {
+  ADMIN
+  SUPERVISOR
+  STAFF
+  DRIVER
+}
+
+enum BinStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+}
+
+enum RouteStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum BinRouteStatus {
+  PENDING
+  COMPLETED
+  SKIPPED
+}

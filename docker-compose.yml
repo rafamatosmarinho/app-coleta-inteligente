@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:/app/db/custom.db
+      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_SECRET=IbKWp3twdn9hhSywgcIc5r+KzdwCAit84Uif0rgBdj4=
+    volumes:
+      - ./db:/app/db
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  # Database service (for development)
+  db:
+    image: alpine:latest
+    volumes:
+      - ./db:/db
+    command: sh -c "mkdir -p /db && touch /db/custom.db"
+    restart: unless-stopped
+
+  # Optional: Redis for caching (if needed)
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+volumes:
+  redis_data:
