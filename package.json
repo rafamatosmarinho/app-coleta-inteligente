@@ -17,7 +17,7 @@
     "docker:down": "docker-compose down",
     "docker:restart": "docker-compose restart",
     "docker:logs": "docker-compose logs -f",
-    "docker:seed": "docker-compose exec app npx tsx src/lib/seed.ts",
+   "docker:seed": "docker-compose exec app npm run seed",
     "docker:dev": "docker-compose -f docker-compose.dev.yml up",
     "docker:prod": "docker-compose up -d",
     "docker:clean": "docker-compose down -v && docker system prune -f"
