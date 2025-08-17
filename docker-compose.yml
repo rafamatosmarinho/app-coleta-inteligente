@@ -10,11 +10,11 @@ services:
       - NODE_ENV=development
       - DATABASE_URL=file:/app-coleta-inteligente/db/custom.db
       - NEXTAUTH_URL=http://localhost:3000
-      - NEXTAUTH_SECRET=IbKWp3twdn9hhSywgcIc5r+KzdwCAit84Uif0rgBdj4=
+      - NEXTAUTH_SECRET=pZd/5V0axyLuvwNsdvhRyeiFNO7mzJ/DAwENLma/yPM=
       - HOSTNAME=0.0.0.0
     volumes:
       - .:/app-coleta-inteligente
-      - /app-coleta-inteligente/node_modules
+      - /app-coleta-inteligente/node_module
       - next_cache:/app-coleta-inteligente/.next/cache
     depends_on:
       - db
