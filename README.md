@@ -29,7 +29,7 @@ docker-compose build --no-cache
 docker-compose up
 ```
 
-Depois de rodar o comando docker-compose up, a aplicação estará disponível em http://localhost:3000.
+Depois de rodar o comando docker-compose up, a aplicação estará disponível em http://localhost:3000/login.
 
 🎓 Desenvolvedores
 Este projeto foi desenvolvido com dedicação e empenho por:
