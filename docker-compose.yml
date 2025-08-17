@@ -1,30 +1,30 @@
 version: "3.8"
-
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=production
-      - DATABASE_URL=file:/app/db/custom.db
+      - NODE_ENV=development
+      - DATABASE_URL=file:/app-coleta-inteligente/db/custom.db
       - NEXTAUTH_URL=http://localhost:3000
       - NEXTAUTH_SECRET=IbKWp3twdn9hhSywgcIc5r+KzdwCAit84Uif0rgBdj4=
+      - HOSTNAME=0.0.0.0
     volumes:
-      - ./db:/app/db
+      - .:/app-coleta-inteligente
+      - /app-coleta-inteligente/node_modules
+      - next_cache:/app-coleta-inteligente/.next/cache
     depends_on:
       - db
     restart: unless-stopped
-
-  # Database service (for development)
   db:
     image: alpine:latest
     volumes:
       - ./db:/db
     command: sh -c "mkdir -p /db && touch /db/custom.db"
     restart: unless-stopped
-
-  # Optional: Redis for caching (if needed)
   redis:
     image: redis:alpine
     ports:
@@ -35,3 +35,4 @@ services:
 
 volumes:
   redis_data:
+  next_cache:
